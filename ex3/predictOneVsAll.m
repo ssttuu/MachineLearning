@@ -34,10 +34,10 @@ X = [ones(m, 1) X];
 hypothesis = sigmoid( X * all_theta');
 [x, p] = max(hypothesis, [], 2);
 %disp(x);
-disp(p);
-disp(hypothesis);
+%disp(p);
+%disp(hypothesis);
 
-%sigmoid( X * 
+%sigmoid( X * all_theta);
 
 
 % =========================================================================

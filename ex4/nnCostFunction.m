@@ -64,20 +64,66 @@ Theta2_grad = zeros(size(Theta2));
 
 
 
+K = num_labels;
+
+Y = eye(K)(y,:); % [5000, 10]
+
+% Part 1
+a1 = [ones(m, 1), X]; % results in [5000, 401]
+a2 = sigmoid(Theta1 * a1'); % results in [25, 5000]
+a2 = [ones(1, size(a2, 2)); a2]; % results in [26, 5000]
+h = sigmoid(Theta2 * a2); % results in [10, 5000]
+
+costPositive = -Y .* log(h)';
+costNegative =  (1 - Y) .* log(1 - h)';
+cost = costPositive - costNegative;
+
+J = (1/m) * sum(cost(:));
+
+% Part 1.4 regularization
+Theta1Filtered = Theta1(:,2:end);
+Theta2Filtered = Theta2(:,2:end);
+reg = (lambda / (2*m)) * (sumsq(Theta1Filtered(:)) + sumsq(Theta2Filtered(:)));
+J = J + reg;
 
 
 
 
 
+Delta1 = 0;
+Delta2 = 0;
+for t = 1:m
+	% step 1
+	a1 = [1; X(t,:)'];
+	z2 = Theta1 * a1;
+	a2 = [1; sigmoid(z2)];
+	z3 = Theta2 * a2;
+	a3 = sigmoid(z3);
+
+	% step 2
+	yt = Y(t,:)';
+
+	d3 = a3 - yt;
+
+	% step 3
+	d2 = (Theta2Filtered' * d3) .* sigmoidGradient(z2);
+	%d2 = d2(2:end);
+
+
+	% step 4
+	Delta2 = Delta2 + (d3 * a2');
+	Delta1 = Delta1 + (d2 * a1');
+endfor
 
 
 
 
+Theta1_grad = (1/m) * Delta1;
+Theta2_grad = (1/m) * Delta2;
 
 
-
-
-
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + ((lambda / m) * Theta1Filtered);
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + ((lambda / m) * Theta2Filtered);
 
 
 % -------------------------------------------------------------
