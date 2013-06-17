@@ -24,6 +24,28 @@ sigma = 0.3;
 %
 
 
+values = [0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 30.0];
+
+
+best = zeros(3,1);
+trialNum = 1;
+
+
+for tmpC = values
+	for tmpS = values
+		trialNum = trialNum + 1;
+		model = svmTrain( X, y, tmpC, @(x1, x2) gaussianKernel( x1, x2, tmpS));
+		prediction = svmPredict( model, Xval);
+		predError = mean(double( prediction == yval));
+		if( predError > best(1) )
+			best = [predError, tmpC, tmpS];
+		end;
+	end;
+end;
+
+C = best(2);
+sigma = best(3);
+
 
 
 
